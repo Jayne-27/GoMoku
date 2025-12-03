@@ -2,6 +2,8 @@ package UI;
 
 import MokuGame.Computer.computerPlayer;
 import MokuGame.Core.GoMokuBoard;
+import MokuGame.Core.InvalidMoveException;
+import MokuGame.Core.GameStateException;
 import MokuGame.Service.GoMoKuGameService;
 import MokuGame.Service.Database;
 
@@ -19,7 +21,7 @@ public class goMoku_Interface {
         database.initializeDatabase(); // connects to PostgreSQL with password "alma"
     }
 
-    public void start() {
+    public void start() throws Exception {
         System.out.println("""
             
            WELCOME TO GO-MOKU GAME, LETS PLAYYYYYY...           
@@ -95,7 +97,7 @@ public class goMoku_Interface {
         }
     }
 
-    private void playGame() {
+    private void playGame() throws Exception {
         System.out.print("Play against Computer? (y/n): ");
         playingAgainstComputer = scanner.nextLine().trim().equalsIgnoreCase("y");
 
@@ -119,11 +121,11 @@ public class goMoku_Interface {
                 try {
                     int row = Integer.parseInt(parts[0]);
                     int col = Integer.parseInt(parts[1]);
-                    if (!gameService.makeMove(row, col)) {
-                        System.out.println("Invalid! Try again.");
-                    }
+                    gameService.makeMove(row, col);
                 } catch (NumberFormatException e) {
                     System.out.println("Please enter numbers only!");
+                } catch (InvalidMoveException | GameStateException e) {
+                    System.out.println("Invalid move: " + e.getMessage());
                 }
             }
         }
@@ -199,6 +201,10 @@ public class goMoku_Interface {
     }
 
     public static void main(String[] args) {
-        new goMoku_Interface().start();
+        try {
+            new goMoku_Interface().start();
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
     }
 }

@@ -13,7 +13,11 @@ public class Main {
      * @param args command line arguments (not used)
      */
     public static void main(String[] args) {
-        goMoku_Interface ui = new goMoku_Interface();
-        ui.start();
+        try {
+            goMoku_Interface ui = new goMoku_Interface();
+            ui.start();
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
     }
 }
