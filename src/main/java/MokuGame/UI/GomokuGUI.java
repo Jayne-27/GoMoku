@@ -1,11 +1,11 @@
-package UI;
+package MokuGame.UI;
 
 import MokuGame.Computer.computerPlayer;
 import MokuGame.Core.GoMokuBoard;
 import MokuGame.Core.InvalidMoveException;
 import MokuGame.Core.GameStateException;
 import MokuGame.Service.GoMoKuGameService;
-import MokuGame.Service.Database;
+import MokuGame.Service.H2Database;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,7 +24,7 @@ public class GomokuGUI extends JFrame {
     // Game components
     private GoMoKuGameService gameService;
     private computerPlayer ai;
-    private Database database;
+    private H2Database database;
     private boolean playingAgainstComputer = false;
 
     // UI components
@@ -48,7 +48,7 @@ public class GomokuGUI extends JFrame {
      * Constructor for the Gomoku GUI.
      */
     public GomokuGUI() {
-        this.database = new Database();
+        this.database = new H2Database();
         this.ai = new computerPlayer();
 
         database.initializeDatabase();

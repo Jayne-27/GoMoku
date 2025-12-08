@@ -1,6 +1,6 @@
 package MokuGame;
 
-import UI.goMoku_Interface;
+import MokuGame.UI.goMoku_Interface;
 
 /**
  * Main entry point for the GoMoku game application.

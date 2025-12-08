@@ -1,11 +1,11 @@
-package UI;
+package MokuGame.UI;
 
 import MokuGame.Computer.computerPlayer;
 import MokuGame.Core.GoMokuBoard;
 import MokuGame.Core.InvalidMoveException;
 import MokuGame.Core.GameStateException;
 import MokuGame.Service.GoMoKuGameService;
-import MokuGame.Service.Database;
+import MokuGame.Service.H2Database;
 
 import java.util.Scanner;
 
@@ -13,7 +13,7 @@ public class goMoku_Interface {
 
     private final Scanner scanner = new Scanner(System.in);
     private GoMoKuGameService gameService;
-    private final Database database = new Database();
+    private final H2Database database = new H2Database();
     private final computerPlayer ai = new computerPlayer();
     private boolean playingAgainstComputer = false;
 

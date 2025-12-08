@@ -1,0 +1,101 @@
+===============================================
+POSTGRESQL SETUP GUIDE FOR GOMOKU GAME
+===============================================
+
+OPTION 1: INSTALL POSTGRESQL
+-----------------------------
+
+Step 1: Download PostgreSQL
+   - Visit: https://www.postgresql.org/download/windows/
+   - Or use direct link: https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+   - Download the latest Windows installer (recommended: PostgreSQL 16.x)
+
+Step 2: Install PostgreSQL
+   1. Run the installer
+   2. Choose installation directory (default: C:\Program Files\PostgreSQL\16)
+   3. Select components:
+      [X] PostgreSQL Server
+      [X] pgAdmin 4
+      [X] Command Line Tools
+   4. Set password for postgres user
+      IMPORTANT: Use "alma" as password (or update Database.java if different)
+   5. Set port: 5432 (default)
+   6. Complete installation
+
+Step 3: Create the Database
+   Option A - Using pgAdmin 4:
+      1. Open pgAdmin 4
+      2. Connect to PostgreSQL (password: alma)
+      3. Right-click "Databases" → Create → Database
+      4. Name: gomoku
+      5. Click Save
+
+   Option B - Using Command Line:
+      1. Open Command Prompt
+      2. Navigate to: C:\Program Files\PostgreSQL\16\bin
+      3. Run: psql -U postgres
+      4. Enter password: alma
+      5. Run: CREATE DATABASE gomoku;
+      6. Run: \q to quit
+
+Step 4: Verify Setup
+   - The PostgreSQL service should start automatically
+   - Check in Windows Services: "postgresql-x64-16"
+   
+Step 5: Test the Game
+   - Run: run-console.bat
+   - You should NOT see database connection errors
+   - Try saving a game (option 5 in menu)
+
+===============================================
+
+OPTION 2: USE IN-MEMORY/FILE-BASED STORAGE (Alternative)
+---------------------------------------------------------
+
+If you don't want to install PostgreSQL, I can modify the game to use:
+- File-based storage (JSON/serialized objects)
+- H2 embedded database (no installation needed)
+
+Let me know if you'd prefer this option!
+
+===============================================
+
+CURRENT DATABASE CONFIGURATION
+------------------------------
+Located in: src/main/java/MokuGame/Service/Database.java
+
+Current settings:
+   URL:      jdbc:postgresql://localhost:5432/gomoku
+   User:     postgres
+   Password: alma
+
+To change these settings, edit Database.java lines 18-20.
+
+===============================================
+
+TROUBLESHOOTING
+---------------
+
+Problem: "Connection refused" error
+Solution: 
+   - Check PostgreSQL service is running
+   - In Windows Services, find "postgresql-x64-16"
+   - Right-click → Start (if not running)
+
+Problem: "Password authentication failed"
+Solution:
+   - Either use "alma" as password during installation
+   - Or update Database.java with your chosen password
+
+Problem: "Database gomoku does not exist"
+Solution:
+   - Create the database using Step 3 above
+
+===============================================
+
+QUICK INSTALLER COMMAND (Using Chocolatey - if installed)
+----------------------------------------------------------
+If you have Chocolatey package manager:
+   choco install postgresql
+
+===============================================
