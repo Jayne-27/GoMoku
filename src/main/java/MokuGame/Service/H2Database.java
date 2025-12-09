@@ -26,14 +26,6 @@ public class H2Database {
      * This method should be called when the application starts.
      */
     public void initializeDatabase() {
-        // Load H2 driver explicitly
-        try {
-            Class.forName("org.h2.Driver");
-        } catch (ClassNotFoundException e) {
-            logger.error("H2 Driver not found", e);
-            return;
-        }
-        
         String ddl = """
             CREATE TABLE IF NOT EXISTS boards (
                 name        VARCHAR(255) PRIMARY KEY,
@@ -46,9 +38,10 @@ public class H2Database {
         try (Connection conn = connect();
              Statement stmt = conn.createStatement()) {
             stmt.execute(ddl);
-            logger.info("H2 Database connected. Table 'boards' is ready. Data stored in: ./data/gomoku.h2.db");
+            logger.info("H2 Database connected successfully! Table 'boards' is ready.");
+            logger.info("Game data is stored in: ./data/gomoku.h2.db");
         } catch (SQLException e) {
-            logger.error("Failed to initialize H2 database schema", e);
+            logger.error("Failed to initialize H2 database. Save/Load features disabled.", e);
         }
     }
 
@@ -59,6 +52,12 @@ public class H2Database {
      * @throws SQLException if connection fails
      */
     private Connection connect() throws SQLException {
+        try {
+            // Explicitly load H2 driver
+            Class.forName("org.h2.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("H2 Driver not found in classpath", e);
+        }
         return DriverManager.getConnection(DB_URL, USER, PASS);
     }
 
