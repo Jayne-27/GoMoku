@@ -39,7 +39,7 @@ public class GomokuGUI extends JFrame {
     // Board styling
     private static final int CELL_SIZE = 40;
     private static final int BOARD_PADDING = 20;
-    private Color boardColor = new Color(222, 184, 135); // Burlywood
+    private Color boardColor = new Color(128, 0, 32); // Burgundy
     private Color lineColor = Color.BLACK;
     private Color playerXColor = Color.BLACK;
     private Color playerOColor = Color.WHITE;
