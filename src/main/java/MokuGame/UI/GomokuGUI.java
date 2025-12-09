@@ -34,6 +34,8 @@ public class GomokuGUI extends JFrame {
     private JButton newGameButton;
     private JButton saveGameButton;
     private JButton loadGameButton;
+    private JButton undoButton;
+    private JButton redoButton;
     private JCheckBox aiCheckBox;
 
     // Board styling
@@ -96,6 +98,14 @@ public class GomokuGUI extends JFrame {
         loadGameButton = new JButton("Load Game");
         loadGameButton.addActionListener(e -> showLoadGameDialog());
 
+        undoButton = new JButton("Undo");
+        undoButton.addActionListener(e -> undoMove());
+        undoButton.setEnabled(false);
+
+        redoButton = new JButton("Redo");
+        redoButton.addActionListener(e -> redoMove());
+        redoButton.setEnabled(false);
+
         aiCheckBox = new JCheckBox("Play vs Computer");
         aiCheckBox.setSelected(false);
 
@@ -108,6 +118,9 @@ public class GomokuGUI extends JFrame {
         topPanel.add(newGameButton);
         topPanel.add(saveGameButton);
         topPanel.add(loadGameButton);
+        topPanel.add(new JSeparator(SwingConstants.VERTICAL));
+        topPanel.add(undoButton);
+        topPanel.add(redoButton);
         topPanel.add(new JSeparator(SwingConstants.VERTICAL));
         topPanel.add(aiCheckBox);
         topPanel.add(new JSeparator(SwingConstants.VERTICAL));
@@ -251,6 +264,7 @@ public class GomokuGUI extends JFrame {
                 gameService.makeMove(row, col);
                 boardPanel.repaint();
                 updateStatusLabels();
+                updateUndoRedoButtons();
 
                 // Check for game end
                 if (gameService.isGameOver()) {
@@ -291,6 +305,7 @@ public class GomokuGUI extends JFrame {
                         gameService.makeMove(move[0], move[1]);
                         boardPanel.repaint();
                         updateStatusLabels();
+                        updateUndoRedoButtons();
 
                         if (gameService.isGameOver()) {
                             handleGameEnd();
@@ -346,6 +361,64 @@ public class GomokuGUI extends JFrame {
     }
 
     /**
+     * Updates the undo/redo button states.
+     */
+    private void updateUndoRedoButtons() {
+        if (gameService != null) {
+            undoButton.setEnabled(gameService.canUndo());
+            redoButton.setEnabled(gameService.canRedo());
+        } else {
+            undoButton.setEnabled(false);
+            redoButton.setEnabled(false);
+        }
+    }
+
+    /**
+     * Undoes the last move.
+     */
+    private void undoMove() {
+        if (gameService == null) return;
+
+        try {
+            if (gameService.undo()) {
+                boardPanel.repaint();
+                updateStatusLabels();
+                updateUndoRedoButtons();
+                statusLabel.setText("Move undone");
+            } else {
+                statusLabel.setText("No moves to undo");
+            }
+        } catch (GameStateException e) {
+            statusLabel.setText("Cannot undo: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Redoes the last undone move.
+     */
+    private void redoMove() {
+        if (gameService == null) return;
+
+        try {
+            if (gameService.redo()) {
+                boardPanel.repaint();
+                updateStatusLabels();
+                updateUndoRedoButtons();
+                statusLabel.setText("Move redone");
+
+                // Check for game end after redo
+                if (gameService.isGameOver()) {
+                    handleGameEnd();
+                }
+            } else {
+                statusLabel.setText("No moves to redo");
+            }
+        } catch (GameStateException e) {
+            statusLabel.setText("Cannot redo: " + e.getMessage());
+        }
+    }
+
+    /**
      * Shows the welcome dialog.
      */
     private void showWelcomeDialog() {
@@ -395,6 +468,7 @@ public class GomokuGUI extends JFrame {
 
         boardPanel.setBoardSize(boardSize);
         saveGameButton.setEnabled(true);
+        updateUndoRedoButtons();
 
         statusLabel.setText("New " + boardSize + "x" + boardSize + " game started!");
         updateStatusLabels();
@@ -456,6 +530,7 @@ public class GomokuGUI extends JFrame {
 
                 boardPanel.setBoardSize(loaded.getRows());
                 saveGameButton.setEnabled(true);
+                updateUndoRedoButtons();
 
                 statusLabel.setText("Game '" + selectedGame + "' loaded successfully!");
                 updateStatusLabels();
